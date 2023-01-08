@@ -5,8 +5,13 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 # Load data sets
-messages = pd.read_csv("messages.csv")
-categories_original = pd.read_csv("categories.csv")
+messages_file = input("Enter filename of messages data: ")
+categories_file = input("Enter filename of categories data: ")
+# messages = pd.read_csv("messages.csv")
+# categories_original = pd.read_csv("categories.csv")
+messages = pd.read_csv(messages_file)
+categories_original = pd.read_csv(categories_file)
+
 
 # ### 2. Merge datasets.
 df = pd.merge(messages, categories_original, on="id")
@@ -67,29 +72,29 @@ categories_colnames = list(categories.columns)
 def remove_non_binary(df):
     
     columns_to_drop = []
-    
-    for col in categories_colnames:
+    print("Non-binary category columns are being cleaned...")
+    for col in categories_colnames[1:]:
 #         print(set(df[col].unique()))
         column_values = set(df[col].unique())
         
         if len(column_values) < 2:
             columns_to_drop.append(col)
-            print(f"Column '{col}' contains less than two unique values and has been dropped.")
+            print(f"Column '{col}' contains fewer than two unique values and has been dropped.")
             
         elif column_values.issubset(set([0, 1])) == False:
             print(f"Column '{col}' contains the following values: {df[col].unique()}. \n Rows containing values other than 0 & 1 are removed.")
             # Remove values that are not 0 or 1
             df = df.loc[df["related"].isin([0,1]) == True]
         
-    df.drop(columns_to_drop, axis = 1, inplace = True)
-        
+    df = df.drop(columns_to_drop, axis = 1)
+    print(f"\n")  
     return df
 
 df = remove_non_binary(df)
 
 # ### 7. Save the clean dataset into an sqlite database.
 
-engine = create_engine('sqlite:///TESTING_UdacityDisasterResponse.db')
+engine = create_engine('sqlite:///UdacityDisasterResponse.db')
 df.to_sql('Messages_Categories', engine, index=False, if_exists="replace")
 
 print("ETL pipeline run completed.")
