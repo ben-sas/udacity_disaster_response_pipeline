@@ -3,14 +3,19 @@
 
 import pandas as pd
 from sqlalchemy import create_engine
+import sys
 
 # Load data sets
-messages_file = input("Enter filename of messages data: ")
-categories_file = input("Enter filename of categories data: ")
-# messages = pd.read_csv("messages.csv")
-# categories_original = pd.read_csv("categories.csv")
-messages = pd.read_csv(messages_file)
-categories_original = pd.read_csv(categories_file)
+
+## Code with input prompt via terminal
+# categories_file = input("Enter filename of categories data: ")
+# messages_file = input("Enter filename of messages data: ")
+# messages = pd.read_csv(messages_file)
+# categories_original = pd.read_csv(categories_file)
+
+## Version with direct input when script is started
+messages = pd.read_csv(sys.argv[1])
+categories_original = pd.read_csv(sys.argv[2])
 
 
 # ### 2. Merge datasets.
