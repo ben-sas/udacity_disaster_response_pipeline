@@ -1,19 +1,12 @@
 # # ETL Pipeline Preparation
-# ### 1. Import libraries and load datasets.
 
+
+# ### 1. Import libraries and load datasets.
 import pandas as pd
 from sqlalchemy import create_engine
 import sys
 
 # Load data sets
-
-## Code with input prompt via terminal
-# categories_file = input("Enter filename of categories data: ")
-# messages_file = input("Enter filename of messages data: ")
-# messages = pd.read_csv(messages_file)
-# categories_original = pd.read_csv(categories_file)
-
-## Version with direct input when script is started
 messages = pd.read_csv(sys.argv[1])
 categories_original = pd.read_csv(sys.argv[2])
 
@@ -21,6 +14,7 @@ categories_original = pd.read_csv(sys.argv[2])
 # ### 2. Merge datasets.
 df = pd.merge(messages, categories_original, on="id")
 df_original = df
+
 
 # ### 3. Split `categories` into separate category columns.
 
@@ -30,12 +24,11 @@ categories = categories_original["categories"].str.split(";", expand=True)
 categories = pd.concat([categories_original["id"], categories], axis=1)
 
 # Rename columns based on first row
-# select the first row of the categories dataframe
 first_row_list = categories.iloc[0].tolist()
 first_row_list[0] = "id--"
-
 category_colnames = [cat[:-2] for cat in first_row_list]
 categories.columns = category_colnames
+
 
 # ### 4. Convert category values to just numbers 0 or 1.
 
@@ -46,6 +39,7 @@ for column in categories.iloc[:,1:]:
     # convert column from string to numeric
     categories[column] = categories[column].astype("int")
 
+
 # ### 5. Replace `categories` column in `df` with new category columns.
 
 df = df.drop("categories", axis=1)
@@ -53,20 +47,15 @@ df = pd.merge(df, categories, how="inner", on="id")
 
 
 # ### 6. Remove duplicates.
-# - Check how many duplicates are in this dataset.
-# - Drop the duplicates.
-# - Confirm duplicates were removed.
 
-# check number of duplicates
-df.duplicated().sum()
-
-# drop duplicates
+# check number of duplicates & drop
+print(f"Initial duplicates in data set: {df.duplicated().sum()}")
 df.drop_duplicates(inplace=True)
+print(f"Duplicates after cleaning: {df.duplicated().sum()}\n")
 
-# %%
 # Check & drop NAs in category label columns
 df = df.dropna(subset=["related"])
-df.isna().sum()
+print(f"N/As in data set after cleaning: \n{df.isna().sum()} \n")
 
 # Convert to int
 df.iloc[:,4:] = df.iloc[:,4:].astype("int")
@@ -75,7 +64,9 @@ df.iloc[:,4:] = df.iloc[:,4:].astype("int")
 categories_colnames = list(categories.columns)
 
 def remove_non_binary(df):
-    
+    """
+    Ensure that each category column is binary. Rows with values not 0/1 are removed. Columns with fewer than two values are removed.
+    """
     columns_to_drop = []
     print("Non-binary category columns are being cleaned...")
     for col in categories_colnames[1:]:
@@ -96,6 +87,7 @@ def remove_non_binary(df):
     return df
 
 df = remove_non_binary(df)
+
 
 # ### 7. Save the clean dataset into an sqlite database.
 
