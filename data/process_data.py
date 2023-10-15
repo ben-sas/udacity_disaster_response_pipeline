@@ -69,7 +69,7 @@ def remove_non_binary(df):
     print("Non-binary category columns are being cleaned...")
     for col in list(df.columns)[4:]:
 #         print(set(df[col].unique()))
-        print(col)
+        # print(col)
         column_values = set(df[col].unique())
         
         if len(column_values) < 2:

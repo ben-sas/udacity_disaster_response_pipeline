@@ -10,9 +10,9 @@ from nltk.stem import WordNetLemmatizer
 from nltk.stem import PorterStemmer
 
 import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
+# nltk.download('punkt')
+# nltk.download('stopwords')
+# nltk.download('wordnet')
 
 from flask import Flask
 from flask import render_template, request, jsonify
@@ -39,9 +39,7 @@ app = Flask(__name__)
 
 
 def tokenize_single(text):
-    """
-    Tokenize text into sentences and then single words. Stopwords are also removed.
-    """
+    """Tokenize text into sentences and then single words. Stopwords are also removed."""
     
     message = text.lower()
     

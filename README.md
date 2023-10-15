@@ -15,7 +15,7 @@ The data is comprised of two separate files:
 
 The following libraries are required to run the code and need to be installed in the virtual environment:
 
-	import pandas as pd
+import pandas as pd
     import numpy as np
     from sqlalchemy import create_engine
     import pickle
@@ -34,10 +34,10 @@ The following libraries are required to run the code and need to be installed in
 
 # Description of files in repository
 
-File Name	  								| File Description
--------------								| -------------
-README.md									| Readme file.
-app/run.py 				                    | Web app that uses the trained model.
+File Name	  				| File Description
+-------------				        | -------------
+README.md				    | Readme file.
+app/run.py 				    | Web app that uses the trained model.
 app/templates/go.html                       | HTML file for the classification results based on user input.
 app/templates/master.html                   | Main web app HTML.
 data/categories.csv                         | Categories data set.
@@ -55,15 +55,21 @@ models/train_classifier.py                  | ML pipeline script.
 
 # How to run the pipelines and web app
 
-1. Run the ETL pipeline and specify input and output files:
+1. Download the necessary NLTK resources when you run the code for the first time:
+
+        nltk.download('punkt')
+        nltk.download('stopwords')
+        nltk.download('wordnet')
+
+2. Run the ETL pipeline and specify input and output files:
         
         python data/process_data.py data/messages.csv data/categories.csv data/DisasterResponse.db
 
-2. Run the ML pipeline and specify input and output files:
+3. Run the ML pipeline and specify input and output files:
 
         python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl
 
-3. Start the web app & access the launched application in your browser
+4. Start the web app & access the launched application in your browser via the IP address displayed in the command line editor
 
         cd app
         python run.py

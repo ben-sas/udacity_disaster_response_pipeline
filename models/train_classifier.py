@@ -98,15 +98,15 @@ def lemmatize_single(text):
 def build_model():
     """Build the model pipeline."""
     pipeline = Pipeline([
-            ('vect', CountVectorizer(tokenizer=lemmatize_single)),
+            ('vect', CountVectorizer(tokenizer=lemmatize_single, token_pattern=None)),
             ('tfidf', TfidfTransformer()),
             ('clf', MultiOutputClassifier(SGDClassifier())),
         ])
     
     # Note, including more parameters significantly increases the time needed to train the model, therefore a small selection has been made.
     gridsearch_parameters = {
-        'clf__estimator__loss': ["hinge", "log_loss", "log", "modified_huber"] #, "squared_hinge", "perceptron", "squared_error", "huber", "epsilon_insensitive", "squared_epsilon_insensitive"],
-        "clf__estimator__alpha" : [0.00005, 0.0001, 0.0005], #[0.00001, 0.00005, 0.0001, 0.0005, 0.001]
+        'clf__estimator__loss': ["hinge", "log_loss"], # "log", "modified_huber", "squared_hinge", "perceptron", "squared_error", "huber", "epsilon_insensitive", "squared_epsilon_insensitive"],
+        #"clf__estimator__alpha" : [0.00005, 0.0001, 0.0005], #[0.00001, 0.00005, 0.0001, 0.0005, 0.001]
         # "clf__estimator__max_iter" : [500, 1000], #[500, 1000, 2000]
         # "clf__estimator__learning_rate" : ["optimal", "adaptive"], #["constant", "optimal", "adaptive"]
         # "clf__estimator__class_weight" : [None, "balanced"]
